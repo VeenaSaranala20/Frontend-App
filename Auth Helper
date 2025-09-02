@@ -1,0 +1,19 @@
+<?php
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+function generateJWT($userId) {
+    $key = "MY_SECRET_KEY";
+    $payload = [
+        'iss' => "http://localhost",
+        'sub' => $userId,
+        'iat' => time(),
+        'exp' => time() + 3600
+    ];
+    return JWT::encode($payload, $key, 'HS256');
+}
+
+function verifyJWT($token) {
+    $key = "MY_SECRET_KEY";
+    return JWT::decode($token, new Key($key, 'HS256'));
+}
