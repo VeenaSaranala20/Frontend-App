@@ -1,0 +1,28 @@
+public function register() {
+    $userModel = new AuthUserModel();
+    $teacherModel = new TeacherModel();
+    $db = \Config\Database::connect();
+    $db->transStart();
+
+    $password = password_hash($this->request->getVar('password'), PASSWORD_BCRYPT);
+    $userData = [
+        'email' => $this->request->getVar('email'),
+        'first_name' => $this->request->getVar('first_name'),
+        'last_name' => $this->request->getVar('last_name'),
+        'password' => $password
+    ];
+    $userModel->insert($userData);
+    $userId = $userModel->getInsertID();
+
+    $teacherData = [
+        'user_id' => $userId,
+        'university_name' => $this->request->getVar('university_name'),
+        'gender' => $this->request->getVar('gender'),
+        'year_joined' => $this->request->getVar('year_joined')
+    ];
+    $teacherModel->insert($teacherData);
+
+    $db->transComplete();
+
+    return $this->response->setJSON(['message' => 'User registered successfully']);
+}
