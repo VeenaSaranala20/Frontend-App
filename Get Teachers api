@@ -1,0 +1,13 @@
+public function getTeachers() {
+    $token = $this->request->getHeaderLine('Authorization');
+    if (!$token) return $this->response->setJSON(['error'=>'No token']);
+
+    try {
+        $decoded = verifyJWT(str_replace("Bearer ", "", $token));
+        $teacherModel = new TeacherModel();
+        $data = $teacherModel->findAll();
+        return $this->response->setJSON($data);
+    } catch (\Exception $e) {
+        return $this->response->setJSON(['error' => 'Invalid token']);
+    }
+}
